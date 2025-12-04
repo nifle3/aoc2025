@@ -1,6 +1,14 @@
 #include <print>
 
+#include "utils.hpp"
+
 int main() {
-  std::println("Hello world");
+  auto lines = get_lines_from_file("input.txt");
+  if (!lines.has_value()) {
+    std::println("File not found");
+    return 1;
+  }
+
+  std::println("Hello world {}", lines.value().size());
   return 0;
 }
