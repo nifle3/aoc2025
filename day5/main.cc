@@ -7,14 +7,17 @@
 struct TreeNode {
   std::uint64_t end;
   std::uint64_t start;
+  std::uint64_t max_end;
 
   std::shared_ptr<TreeNode> left;
   std::shared_ptr<TreeNode> right;
 
   TreeNode(std::uint64_t start, std::uint64_t end) noexcept
-      : end(end), start(start), left(nullptr), right(nullptr) {}
+      : end(end), start(start), max_end(end), left(nullptr), right(nullptr) {}
 
   void add(std::shared_ptr<TreeNode> new_node) noexcept {
+    this->max_end = std::max(this->max_end, new_node->end);
+
     if (this->start <= new_node->start) {
       if (!this->right) {
         this->right = new_node;
@@ -32,31 +35,20 @@ struct TreeNode {
     }
   }
   bool find(std::uint64_t value) noexcept {
-    // 1. Попали в текущий диапазон
-    if (this->start <= value && this->end >= value) {
+    if (this->max_end < value) {
+      return false;
+    }
+
+    if (this->end >= value && this->start <= value) {
       return true;
     }
 
-    // 2. Если значение меньше начала текущего узла,
-    // оно ОБЯЗАНО быть слева (т.к. все справа начинаются еще позже)
-    if (value < this->start) {
-      return this->left && this->left->find(value);
+    if (this->left && this->left->max_end >= value) {
+      return this->left->find(value);
     }
 
-    // 3. Если значение больше начала (value > this->start),
-    // оно может быть СЛЕВА (если там длинный диапазон, начавшийся раньше)
-    // или СПРАВА (стандартный случай).
-    // Нужно проверять оба варианта.
-
-    // Сначала проверим правую ветку (наиболее вероятно для непересекающихся)
-    if (this->right && this->right->find(value)) {
-      return true;
-    }
-
-    // Если не нашли справа, обязательно проверяем слева (из-за возможных
-    // перекрытий)
-    if (this->left && this->left->find(value)) {
-      return true;
+    if (this->right && this->start < value) {
+      return this->right->find(value);
     }
 
     return false;
