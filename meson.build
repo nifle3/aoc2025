@@ -9,4 +9,4 @@ add_project_arguments('-std=c++23', language: 'cpp')
 
 subdir('common')
 subdir('day1')
-
+subdir('day2')
