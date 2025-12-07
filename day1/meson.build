@@ -4,4 +4,5 @@ configure_file(
   copy: true
 )
 
-executable('day1', 'main.cc', dependencies: dep_common)
+executable('part1', 'part1.cc', dependencies: dep_common)
+executable('part2', 'part2.cc', dependencies: dep_common)
