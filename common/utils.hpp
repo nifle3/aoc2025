@@ -17,3 +17,4 @@ read_file_with_delimeter(std::string_view file_name,
 std::size_t str_to_sizet(const std::string_view str);
 
 std::uint64_t sv_to_uint64t(std::string_view sv);
+std::uint64_t sv_to_int64t(std::string_view sv);
