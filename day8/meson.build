@@ -5,3 +5,4 @@ configure_file(
 )
 
 executable('part1', 'part1.cc', dependencies: dep_common)
+executable('part2', 'part2.cc', dependencies: dep_common)
