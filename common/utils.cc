@@ -4,6 +4,7 @@
 #include <iterator>
 #include <optional>
 #include <ranges>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -59,6 +60,22 @@ std::size_t str_to_sizet(std::string_view str) {
   }
 
   if (err != std::errc{} || ptr != (str.data() + str.size())) {
+    throw std::invalid_argument{"bad number"};
+  }
+
+  return result;
+}
+
+std::uint64_t sv_to_uint64t(std::string_view sv) {
+  sv.remove_prefix(std::min(sv.find_first_not_of(" \t\r\n"), sv.size()));
+  sv.remove_suffix(sv.size() - sv.find_last_not_of(" \t\r\n") - 1);
+  std::uint64_t result;
+  auto [ptr, err] = std::from_chars(sv.data(), sv.data() + sv.size(), result);
+
+  if (err == std::errc::result_out_of_range) {
+    throw std::out_of_range{"overflow"};
+  }
+  if (err != std::errc{} || ptr != (sv.data() + sv.size())) {
     throw std::invalid_argument{"bad number"};
   }
 
