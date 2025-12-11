@@ -82,7 +82,7 @@ std::uint64_t sv_to_uint64t(std::string_view sv) {
   return result;
 }
 
-std::uint64_t sv_to_int64t(std::string_view sv) {
+std::int64_t sv_to_int64t(std::string_view sv) {
   sv.remove_prefix(std::min(sv.find_first_not_of(" \t\r\n"), sv.size()));
   sv.remove_suffix(sv.size() - sv.find_last_not_of(" \t\r\n") - 1);
   std::int64_t result;
