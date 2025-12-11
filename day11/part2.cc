@@ -1,4 +1,5 @@
 #include <deque>
+#include <map>
 #include <print>
 #include <ranges>
 #include <string_view>
@@ -34,22 +35,31 @@ int main() {
     m.insert(std::move(edge));
   }
 
-  std::deque<std::string_view> d;
-  std::int64_t result(0);
-  d.push_back("you");
-
-  while (d.size() != 0) {
-    const auto e = d.front();
-    d.pop_front();
-    if (e == "out") {
-      result++;
-      continue;
+  std::map<std::pair<std::string_view, std::int64_t>, std::int64_t> cache;
+  const auto calc = [&](auto self, bool is_dac, bool is_fft,
+                        std::string_view cur) -> std::int64_t {
+    is_dac = is_dac || cur == "dac";
+    is_fft = is_fft || cur == "fft";
+    if (cur == "out") {
+      return (is_dac && is_fft) ? 1 : 0;
     }
 
-    for (const auto value : m[e]) {
-      d.push_back(value);
+    std::int64_t state = (is_dac ? 1 : 0) | (is_fft ? 2 : 0);
+    auto key = std::make_pair(cur, state);
+
+    if (cache.contains(key)) {
+      return cache[key];
     }
-  }
+
+    std::int64_t sum = 0;
+    for (const auto v : m.at(cur)) {
+      sum += self(self, is_dac, is_fft, v);
+    }
+
+    return cache[key] = sum;
+  };
+
+  const auto result = calc(calc, false, false, "svr");
 
   std::println("Result: {}", result);
 
